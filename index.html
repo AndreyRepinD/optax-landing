@@ -136,6 +136,20 @@ nav{position:sticky;top:0;z-index:50;background:rgba(14,17,22,.88);backdrop-filt
 #mapSvg[data-lod="0"] .lodsub{opacity:0}
 #mapSvg .lod2{opacity:0}
 #mapSvg[data-lod="2"] .lod2{opacity:1}
+#miClose{position:absolute;top:6px;right:10px;background:none;border:none;color:var(--dim);font-size:20px;line-height:1;cursor:pointer;padding:4px}
+#miClose:hover{color:var(--text)}
+@media(max-width:700px){
+  #mapSvg{height:56vh;min-height:400px;touch-action:pan-y}
+  .map-wrap:fullscreen #mapSvg{touch-action:none}
+  .map-hint{display:none}
+  .preset{font-size:11px;padding:7px 10px}
+  .ubtn{font-size:11.5px;padding:7px 10px}
+  .cfgt{font-size:10.5px}
+  .demo-wrap .demo-svg{order:1}
+  .demo-wrap .uni-tabs{order:2;margin:0 0 4px}
+  .demo-wrap .demo-side{order:3}
+}
+@media(max-width:560px){.chain span{font-size:11px;padding:4px 8px}}
 
 /* WHY */
 .why{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
@@ -455,6 +469,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;font-size:13px;color:var(
       </div>
       <div class="map-zoom" id="zoomPct">100%</div>
       <div class="map-info" id="mapInfo">
+        <button id="miClose" aria-label="Закрыть">×</button>
         <div class="tag" id="miTag"></div>
         <div class="t" id="miT"></div>
         <p id="miP"></p>
@@ -494,7 +509,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;font-size:13px;color:var(
     <div class="svc2">
       <div class="term reveal">
         <div class="term-bar"><b></b><b></b><b></b><span>io_config · PostgreSQL</span></div>
-        <div style="padding:4px 8px 6px">
+        <div style="padding:4px 8px 6px;overflow-x:auto">
           <table class="cfgt">
             <tr><th>параметр</th><th>сущность</th><th>значение</th></tr>
             <tr><td>alias_id</td><td>global</td><td>300</td></tr>
@@ -803,11 +818,15 @@ arrow(610,677,287,677,{label:'← план · БД · CSV · S3',laby:661,pulse:
   })(performance.now());
 })();
 /* ---- transforms, zoom & pan ---- */
+var isMob=window.innerWidth<=700;
 var s=0.93,tx=VBW/2-750*s,ty=VBH/2-400*s;
+if(isMob){var MP={'0.93':['1.0','750','400'],'1.4':['3.4','480','315'],'1.25':['3.2','1080','300']};
+  document.querySelectorAll('.preset').forEach(function(b){var m=MP[b.dataset.s];if(m){b.dataset.s=m[0];b.dataset.x=m[1];b.dataset.y=m[2];}});}
 function clampS(v){return Math.max(0.45,Math.min(4.5,v));}
 function apply(){
   world.setAttribute('transform','translate('+tx+','+ty+') scale('+s+')');
-  svg.setAttribute('data-lod', s<0.8?0:(s>1.45?2:1));
+  var pxs=((svg.clientWidth||1090)/1500)*s;
+  svg.setAttribute('data-lod', pxs<0.58?0:(pxs>1.05?2:1));
   document.getElementById('zoomPct').textContent=Math.round(s*100)+'%';
   document.querySelectorAll('.preset').forEach(function(b){
     b.classList.toggle('act',Math.abs(parseFloat(b.dataset.s)-s)<0.12);
@@ -861,6 +880,7 @@ document.getElementById('zReset').addEventListener('click',function(){zoomTo(0.9
 document.querySelectorAll('.preset').forEach(function(b){b.addEventListener('click',function(){
   zoomTo(parseFloat(b.dataset.s),parseFloat(b.dataset.x),parseFloat(b.dataset.y))})});
 var info=document.getElementById('mapInfo'),miMore=document.getElementById('miMore'),sel=null;
+document.getElementById('miClose').addEventListener('click',function(e){e.stopPropagation();closeInfo();highlight(null);});
 function clsOf(key){var m=key&&key.match(/^(?:c|m)_(snp|meio|tlb|sch)$/);return m?m[1]:null;}
 function highlight(cls){
   HL=cls;
