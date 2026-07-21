@@ -132,16 +132,21 @@ nav{position:sticky;top:0;z-index:50;background:rgba(14,17,22,.88);backdrop-filt
 #mapSvg .node rect,#mapSvg .node circle{transition:filter .2s ease}
 #mapSvg .node:hover rect,#mapSvg .node:hover circle{filter:brightness(1.4)}
 #mapSvg .node.sel rect,#mapSvg .node.sel circle{stroke:#22D3EE;stroke-width:2}
-#mapSvg .lodsub,#mapSvg .lod2{transition:opacity .25s ease}
-#mapSvg[data-lod="0"] .lodsub{opacity:0}
-#mapSvg .lod2{opacity:0}
-#mapSvg[data-lod="2"] .lod2{opacity:1}
+#mapSvg .lodsub,#mapSvg .lod2,#techSvg .lodsub,#techSvg .lod2{transition:opacity .25s ease}
+#mapSvg[data-lod="0"] .lodsub,#techSvg[data-lod="0"] .lodsub{opacity:0}
+#mapSvg .lod2,#techSvg .lod2{opacity:0}
+#mapSvg[data-lod="2"] .lod2,#techSvg[data-lod="2"] .lod2{opacity:1}
+#techSvg{display:block;width:100%;height:390px;cursor:grab;touch-action:none}
+#techSvg.dragging{cursor:grabbing}
+#techSvg text{pointer-events:none;user-select:none;font-family:'Golos Text',sans-serif}
+#techSvg .olab{font-family:'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase}
 #miClose{position:absolute;top:6px;right:10px;background:none;border:none;color:var(--dim);font-size:20px;line-height:1;cursor:pointer;padding:4px}
 #miClose:hover{color:var(--text)}
 @media(max-width:700px){
   #mapSvg{height:56vh;min-height:400px;touch-action:pan-y}
   .map-wrap:fullscreen #mapSvg{touch-action:none}
   .map-hint{display:none}
+  #techSvg{height:44vh;min-height:300px;touch-action:pan-y}
   .preset{font-size:11px;padding:7px 10px}
   .ubtn{font-size:11.5px;padding:7px 10px}
   .cfgt{font-size:10.5px}
@@ -246,7 +251,10 @@ nav{position:sticky;top:0;z-index:50;background:rgba(14,17,22,.88);backdrop-filt
 .num .val{font-family:'JetBrains Mono',monospace;font-size:clamp(22px,2.6vw,30px);font-weight:500;color:var(--accent);margin-bottom:4px}
 .num .lab{font-size:13px;color:var(--muted)}
 @media(max-width:920px){.numbers .container{grid-template-columns:repeat(2,1fr)}}
-.solv{display:grid;grid-template-columns:1fr;gap:22px}
+.solv{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.solv .wide{grid-column:1/-1}
+.trow{font-size:13.5px;color:var(--muted);margin:10px 0;line-height:1.6}
+.trow b{color:var(--text)}
 .solv-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:32px}
 .mrow{display:grid;grid-template-columns:10px minmax(120px,200px) 1fr;gap:12px;align-items:center;margin:12px 0;font-size:13.5px}
 .mrow i{width:10px;height:10px;border-radius:3px}
@@ -312,7 +320,10 @@ footer{border-top:1px solid var(--line);padding:28px 0;font-size:13px;color:var(
     <div class="nav-links">
       <a href="#modules">Задачи</a>
       <a href="#demo">Демо</a>
+      <a href="#cases">Кейсы</a>
       <a href="#map">Карта</a>
+      <a href="#solvers">Технологии</a>
+      <a href="#service">Интеграция</a>
     </div>
     <a class="btn btn-grad" href="#contact">Запросить демо</a>
   </div>
@@ -322,7 +333,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;font-size:13px;color:var(
   <div class="container hero-grid">
     <div>
       <h1>Оптимальные планы —<br>внутри <span class="g">любой платформы</span></h1>
-      <p class="hero-sub">OptAx — мультиплатформенный движок оптимизационного планирования. Встраивается в IBP-платформу через открытый API и превращает солвер в готовое бизнес-решение.</p>
+      <p class="hero-sub">OptAx — мультиплатформенный движок оптимизационного планирования. Встраивается в IBP-платформу через открытый API: бизнес-логика, ускорение, проверки данных и интерпретация результата поверх солвера.</p>
       <div class="chain" aria-label="Задачи планирования">
         <span>Оптимизация цепочки поставок</span><i>·</i><span>Мультиэшелонная оптимизация запасов</span><i>·</i><span>Оптимизация загрузки транспортного средства</span><i>·</i><span>Оптимизация производственного расписания</span>
       </div>
@@ -377,7 +388,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;font-size:13px;color:var(
   <div class="container">
     <div class="section-head reveal">
       <div class="eyebrow">Интерактив</div>
-      <h2>Принцип оптимизации — в один клик</h2>
+      <h2>Как работает оптимизация</h2>
       <p>Упрощённая модель сети: три завода, два склада, пять регионов. Кликните узел сети или выберите класс задачи кнопкой — каждый уровень показывает свою задачу оптимизации.</p>
     </div>
     <div class="demo-wrap reveal" id="dpUni">
@@ -393,7 +404,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;font-size:13px;color:var(
       <div class="demo-side" id="uniPanel">
         <h3>Сеть целиком</h3>
         <p>Кликните узел сети: <b>завод</b> — производственное расписание, <b>склад</b> — запасы и сервис, <b>фура</b> — загрузка ТС, <b>регион</b> — спрос.</p>
-        <div class="demo-note">Один движок — все уровни решения: от плана сети до расписаний и загрузки транспорта.</div>
+        <div class="demo-note">Один движок: план сети, запасы, загрузка транспорта, расписания.</div>
       </div>
     </div>
   </div>
@@ -413,6 +424,39 @@ footer{border-top:1px solid var(--line);padding:28px 0;font-size:13px;color:var(
   </div>
 </div>
 
+
+<section id="cases" style="padding-bottom:0">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Кейсы</div>
+      <h2>Где движок работает уже сейчас</h2>
+    </div>
+    <div class="paths">
+      <div class="path reveal">
+        <span class="tag">CPG / FMCG · цепочка поставок + запасы + расписания</span>
+        <h3>Крупный производитель напитков</h3>
+        <p>Промышленная эксплуатация с 2026 года: три класса задач на одном движке, 11 заводов, 75+ брендов. По сравнению с прежней системой планирования:</p>
+        <ul>
+          <li>Запасы готовой продукции −30% при уровне сервиса +10 п.п. (78 → 89%)</li>
+          <li>Покрытие спроса 99,5% · загрузка мощностей вне замороженного горизонта — 100%</li>
+          <li>Модель: 23 тыс. продукт-локаций · 3,4 млн переменных · 11,6 тыс. дискретных · горизонт 20 недель</li>
+          <li>В контуре — страховые запасы (мультиэшелонная оптимизация) и производственные расписания заводов</li>
+        </ul>
+      </div>
+      <div class="path reveal">
+        <span class="tag">Металлургия · оптимизация цепочки поставок</span>
+        <h3>Крупная металлургическая компания</h3>
+        <p>Промышленная эксплуатация, on-prem. Объёмное планирование продаж, производства, закупок и перемещений — замена зарубежной системы:</p>
+        <ul>
+          <li>Расчёт плана вдвое быстрее: 25 → 12 минут; три параллельных расчёта одновременно</li>
+          <li>Сходимость планов с прежней системой — 99,9% уже на первом этапе</li>
+          <li>Модель: 20 000+ единиц продукции · до 40 альтернативных маршрутов изготовления · ~15 переделов</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="why" style="padding-top:64px">
   <div class="container">
     <div class="section-head reveal">
@@ -422,8 +466,8 @@ footer{border-top:1px solid var(--line);padding:28px 0;font-size:13px;color:var(
     <div class="why">
       <div class="w reveal"><h4>Быстрая встраиваемость</h4><p>Открытый API: REST · CLI · Python; web (sync) и batch (async). Интеграция через общий слой данных — без переделки платформы.</p></div>
       <div class="w reveal"><h4>Широкий набор бизнес-задач</h4><p>От максимизации маржи и уровня сервиса до оптимизации смешения, запуска и вывода продукта.</p></div>
-      <div class="w reveal"><h4>Кросс-индустриальность</h4><p>Один движок для многих отраслей — от CPG/FMCG и пищевых производств до фармы, химии и металлургии.</p></div>
-      <div class="w reveal"><h4>Интерпретируемость</h4><p>«Объясняемый» план: экономическое обоснование каждой операции и сквозная себестоимость до позиции спроса.</p></div>
+      <div class="w reveal"><h4>Кросс-индустриальность</h4><p>Отраслевая специфика задаётся конфигурацией, а не изменением ядра: одна модель пяти сущностей и материального баланса.</p></div>
+      <div class="w reveal"><h4>Интерпретируемость</h4><p>Экономическое обоснование каждой операции; сквозная себестоимость до позиции спроса.</p></div>
     </div>
   </div>
 </section>
@@ -432,7 +476,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;font-size:13px;color:var(
   <div class="container">
     <div class="section-head reveal">
       <div class="eyebrow">Отрасли</div>
-      <h2>Кросс-индустриальный движок</h2>
+      <h2>Отрасли применения</h2>
     </div>
     <div class="inds reveal">
       <span>CPG / FMCG</span>
@@ -483,18 +527,47 @@ footer{border-top:1px solid var(--line);padding:28px 0;font-size:13px;color:var(
 <section id="solvers">
   <div class="container">
     <div class="section-head reveal">
-      <div class="eyebrow">Солверы</div>
-      <h2>Методы и солверы: под каждый класс задач — свой</h2>
+      <div class="eyebrow">Производительность и технологии</div>
+      <h2>Производительность и технологии</h2>
     </div>
     <div class="solv">
       <div class="solv-card reveal">
         <h3 style="font-size:17px;font-weight:600;margin-bottom:6px">Метод под каждый класс задач</h3>
-        <p style="color:var(--muted);font-size:14px">Solver-agnostic: движок не привязан к одному решателю — выбор задаётся конфигурацией.</p>
+        <p style="color:var(--muted);font-size:14px">Солвер выбирается параметром конфигурации — модель не меняется.</p>
         <div class="mrow"><i style="background:#4C8DFF"></i><b>Оптимизация цепочки поставок</b><span>MILP — COPT · CPLEX · Gurobi · SCIP</span></div>
         <div class="mrow"><i style="background:#F0B45B"></i><b>Оптимизация загрузки транспортного средства</b><span>эвристика + MILP — жадная граница, затем точное решение</span></div>
         <div class="mrow"><i style="background:#34D399"></i><b>Мультиэшелонная оптимизация запасов</b><span>Optuna — итеративная оптимизация уровней сервиса</span></div>
         <div class="mrow"><i style="background:#A78BFA"></i><b>Оптимизация производственного расписания</b><span>CP-SAT + LNS — Google OR-Tools</span></div>
       </div>
+      <div class="solv-card reveal">
+        <h3 style="font-size:17px;font-weight:600;margin-bottom:6px">Окна расчёта — фактические прогоны</h3>
+        <div class="mrow"><i style="background:#4C8DFF"></i><b>Оптимизация цепочки поставок</b><span>флагманская задача — 41 тыс продукт-локаций · 15 млн переменных: минуты (COPT · CPLEX) — часы (SCIP) · OPTIMAL</span></div>
+        <div class="mrow"><i style="background:#34D399"></i><b>Мультиэшелонная оптимизация запасов</b><span>полный расчёт сети: ~12 часов; распараллеливание по подграфам — выигрыш зависит от связанности цепочек</span></div>
+        <div class="mrow"><i style="background:#F0B45B"></i><b>Оптимизация загрузки транспортного средства</b><span>10 тыс строк спроса · 1 тыс ТС: 6 минут</span></div>
+        <div class="mrow"><i style="background:#A78BFA"></i><b>Оптимизация производственного расписания</b><span>до 15 минут на расчёт</span></div>
+        <div class="mrow"><i style="background:#5C6675"></i><b>Малые задачи</b><span>до 0,5 млн переменных — секунды · web-режим, интерактив «что если»</span></div>
+      </div>
+      <div class="solv-card reveal wide">
+        <h3 style="font-size:17px;font-weight:600;margin-bottom:6px">Технологии</h3>
+
+        <div class="trow"><b>In-memory вычисления</b> — задача удерживается в памяти пода Kubernetes: сессии и частичный пересчёт без повторной загрузки и сборки модели. Типовой под — ~70 ГБ: вмещает большой датасет на 60+ периодов.</div>
+        <div class="trow"><b>Ускорение</b> — декомпозиция по периодам и продуктам · warm start · выбор солвера и метода конфигурацией, без изменения модели.</div>
+        <div class="trow"><b>Развёртывание</b> — on-prem / cloud; типовой прогон флагманской задачи: 14–16 CPU · 80–200 ГБ RAM.</div>
+        <div class="trow"><b>Один под — одна модель</b> — параллельные прогоны многих пользователей и версий; поды поднимаются под задачу, без постоянного резерва RAM и CPU; ранние результаты по мере готовности.</div>
+      </div>
+      <div class="solv-card reveal wide" style="padding:22px 22px 16px">
+        <h3 style="font-size:17px;font-weight:600;margin-bottom:10px">Среда исполнения: единый контур · два режима запуска</h3>
+        <div style="position:relative">
+          <svg id="techSvg" viewBox="0 0 1500 560" role="application" aria-label="Среда исполнения OptAx: web и batch — режимы запуска одного контура"></svg>
+          <div class="zbtns" style="position:absolute;top:10px;left:10px">
+            <button class="zbtn" id="tZin" title="Приблизить">+</button><button class="zbtn" id="tZout" title="Отдалить">−</button><button class="zbtn" id="tZr" title="Сбросить">⟲</button>
+          </div>
+          <div class="map-zoom" id="tPct" style="position:absolute;right:10px;top:10px">100%</div>
+        </div>
+        <div class="svc-cap" style="margin-top:8px">колесо / пинч — масштаб: приближение открывает детали · оба режима запускаются из платформы в один контур</div>
+        <div class="trow" style="margin-top:10px">Один роутер запускает три операции над моделью в памяти: оптимизацию, корректировку, удаление переменной. Пересборка модели не требуется.</div>
+      </div>
+      
     </div>
   </div>
 </section>
@@ -537,7 +610,7 @@ $ curl /api/v1/runs/f4c9
  "results": ["results_*", "marking_demand"]}</pre>
       </div>
     </div>
-    <div class="svc-cap reveal">Фрагмент реального конфига класса «Мультиэшелонная оптимизация запасов»; у каждого класса задач — свой набор конфиг-таблиц. Режимы запуска: web (sync, интерактив) и batch (async, очередь). Всё — без разработки.</div>
+    <div class="svc-cap reveal">Фрагмент реального конфига класса «Мультиэшелонная оптимизация запасов»; у каждого класса задач — свой набор конфиг-таблиц. Режимы запуска: web (sync, интерактив) и batch (async, очередь).</div>
   </div>
 </section>
 
@@ -545,18 +618,18 @@ $ curl /api/v1/runs/f4c9
   <div class="container">
     <div class="section-head reveal">
       <div class="eyebrow">Возможности</div>
-      <h2>Не просто солвер — готовое бизнес-решение</h2>
+      <h2>Готовое бизнес-решение поверх солвера</h2>
     </div>
     <div class="caps">
-      <div class="cap reveal"><h4><span>—</span> Глубокая настройка без разработки</h4><p>Параметры и ограничения адаптируются под бизнес-процессы: продуктовые группы, особые периоды, запасы, квоты, партии.</p></div>
-      <div class="cap reveal"><h4><span>—</span> Достоверные данные</h4><p>Data Checker проверяет целостность и корректность цепочек до запуска расчёта — embedded или standalone.</p></div>
-      <div class="cap reveal"><h4><span>—</span> «Объясняемый» план</h4><p>Экономическое обоснование: почему операция выгодна или невыгодна. Сквозная себестоимость до позиции спроса.</p></div>
-      <div class="cap reveal"><h4><span>—</span> Высокая скорость</h4><p>Гибридный подход: эвристики, декомпозиция по периодам и продуктам, warm start — кратное ускорение на production-масштабе.</p></div>
+      <div class="cap reveal"><h4><span>—</span> Кастомизация без доработки кода</h4><p>Жёсткие и мягкие ограничения задаются параметрами на любом уровне иерархии — материал, группа, локация, период — и по любым колонкам данных.</p></div>
+      <div class="cap reveal"><h4><span>—</span> Проверка данных · Data Checker</h4><p>Data Checker проверяет целостность и корректность цепочек до запуска расчёта — embedded или standalone.</p></div>
+      <div class="cap reveal"><h4><span>—</span> Экономика плана</h4><p>Экономическое обоснование: почему операция выгодна или невыгодна. Сквозная себестоимость до позиции спроса.</p></div>
+      <div class="cap reveal"><h4><span>—</span> Высокая скорость</h4><p>Эвристики, декомпозиция по периодам и продуктам, warm start.</p></div>
       <div class="cap reveal"><h4><span>—</span> Послойная оптимизация</h4><p>Баланс затрат, запасов и уровня сервиса: ключевые контракты → маржа → минимизация затрат.</p></div>
       <div class="cap reveal"><h4><span>—</span> Онлайн-оптимизация</h4><p>Точечные ручные корректировки плана с пересчётом в реальном времени — «что если» в интерактиве.</p></div>
       <div class="cap reveal"><h4><span>—</span> Нормативы по запасам с учётом ёмкости складов</h4><p>Двухшаговый сценарий расчёта запасов: базовый расчёт → автоматическое определение сезонов перегрузки складов → переоптимизация с сезонными уровнями сервиса, чтобы план вписался в доступную ёмкость.</p></div>
       <div class="cap reveal"><h4><span>—</span> Разбор конфликтов вместо INFEASIBLE</h4><p>Constraints Analyzer в расписаниях объясняет, какие ограничения противоречат; мягкие ограничения дают «лучшее из возможного».</p></div>
-      <div class="cap reveal"><h4><span>—</span> Окна отгрузки со штрафами</h4><p>Ранняя отгрузка и опоздание (prebuild / latency) при загрузке ТС — управляемые компромиссы с настраиваемой стоимостью.</p></div>
+      <div class="cap reveal"><h4><span>—</span> Окна отгрузки со штрафами</h4><p>Ранняя отгрузка и опоздание (prebuild / latency) — со своей стоимостью в целевой функции.</p></div>
       <div class="cap reveal"><h4><span>—</span> План → исполнение: заявки на перемещение</h4><p>Загрузка ТС превращает план распределения в готовые заявки на перемещение для логистики — с учётом типов ТС, кратности и совместимости грузов.</p></div>
       <div class="cap reveal"><h4><span>—</span> Мягкие ограничения и ступенчатые сроки</h4><p>Жёсткие и мягкие ограничения в расписаниях: на переопределённых задачах — «лучшее из возможного»; опоздание — не бинарный срыв, а ступенчатая стоимость.</p></div>
     </div>
@@ -598,7 +671,7 @@ var svg=document.getElementById('mapSvg');
 var VBW=1500,VBH=900;
 var CLR={snp:'#4C8DFF',meio:'#34D399',tlb:'#F0B45B',sch:'#A78BFA'};
 var INFO={
-  plat:{tag:'платформа',t:'IBP-платформа · ERP · DWH',p:'Источник данных и место работы пользователя: интерфейс, роли и доступы, настройка оптимизатора, потребление плана. OptAx не заменяет платформу — встраивается в неё.'},
+  plat:{tag:'платформа',t:'IBP-платформа · ERP · DWH',p:'Источник данных и место работы пользователя: интерфейс, роли и доступы, настройка оптимизатора, потребление плана.'},
   ui:{tag:'платформа',t:'UI · роли и доступы',p:'Пользовательский слой — экраны, ролевая модель, права к сценариям — на стороне платформы (Схема 1). В Схеме 2 роли и доступы к сценариям входят в рабочее место OptAx.'},
   cfg:{tag:'платформа',t:'Настройка оптимизатора',p:'Декларативная конфигурация в таблицах БД: профили (config_id), ограничения, параметры, KPI. Цепочка поставок: optimizer_config · alias · selection; запасы: io_config · io_alias; загрузка ТС и расписания: профили batch-прогонов. Настройка без разработки.'},
   dat_m:{tag:'данные',t:'Основные данные',p:'Структура сети поставок и локации, ресурсы и мощности, BOM, справочники транспорта (типы ТС, виды транспорта), календари линий и простои.'},
@@ -820,7 +893,7 @@ arrow(610,677,287,677,{label:'← план · БД · CSV · S3',laby:661,pulse:
 /* ---- transforms, zoom & pan ---- */
 var isMob=window.innerWidth<=700;
 var s=0.93,tx=VBW/2-750*s,ty=VBH/2-400*s;
-if(isMob){var MP={'0.93':['1.0','750','400'],'1.4':['3.4','480','315'],'1.25':['3.2','1080','300']};
+if(isMob){var MP={'0.93':['1.0','750','440'],'1.4':['3.4','480','315'],'1.25':['3.2','1080','300']};
   document.querySelectorAll('.preset').forEach(function(b){var m=MP[b.dataset.s];if(m){b.dataset.s=m[0];b.dataset.x=m[1];b.dataset.y=m[2];}});}
 function clampS(v){return Math.max(0.45,Math.min(4.5,v));}
 function apply(){
@@ -1238,6 +1311,131 @@ if(reduced){showTerm(true);}else{
     });
   });
   setFlows('naive');showSNP();
+})();
+
+
+/* ================= EXEC MAP: единый контур исполнения (web + batch = режимы запуска) ================= */
+(function(){
+  var tsvg=document.getElementById('techSvg');if(!tsvg)return;
+  var TW=1500,TH=560;
+  var tdefs=document.createElementNS(NS,'defs');
+  tdefs.innerHTML='<marker id="ta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#4C8DFF"/></marker>'+
+   '<marker id="tc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#22D3EE"/></marker>';
+  tsvg.appendChild(tdefs);
+  var tw=document.createElementNS(NS,'g');tsvg.appendChild(tw);
+  function tt(x,y,str,fs,fill,anchor,cls,w6){var e=document.createElementNS(NS,'text');
+    e.setAttribute('x',x);e.setAttribute('y',y);e.setAttribute('font-size',fs);
+    e.setAttribute('fill',fill||'#8A94A6');e.setAttribute('text-anchor',anchor||'middle');
+    if(cls)e.setAttribute('class',cls);if(w6)e.setAttribute('font-weight','600');
+    e.textContent=str;tw.appendChild(e);return e;}
+  function tbox(x,y,w,h,title,sub,l2,o){o=o||{};
+    var r=document.createElementNS(NS,'rect');
+    r.setAttribute('x',x);r.setAttribute('y',y);r.setAttribute('width',w);r.setAttribute('height',h);r.setAttribute('rx',10);
+    r.setAttribute('fill',o.fill||'#11151D');r.setAttribute('stroke',o.stroke||'#232B38');r.setAttribute('stroke-width',o.sw||1.2);
+    if(o.dash)r.setAttribute('stroke-dasharray','6 5');if(o.op)r.setAttribute('opacity',o.op);
+    tw.appendChild(r);
+    var ty=sub?y+h/2-6:y+h/2+5;
+    tt(x+w/2,ty,title,o.fs||13,'#E8EDF5',null,null,true);
+    if(sub)tt(x+w/2,ty+17,sub,o.sfs||9.8,'#8A94A6',null,'lodsub');
+    if(l2)tt(x+w/2,(sub?ty+33:ty+21),l2,9,'#5C6675',null,'lod2');
+  }
+  function tarr(x1,y1,x2,y2,o){o=o||{};var l=document.createElementNS(NS,'line');
+    l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);
+    l.setAttribute('stroke',o.c||'#4C8DFF');l.setAttribute('stroke-width',o.w||1.5);
+    if(o.dash)l.setAttribute('stroke-dasharray','6 5');
+    l.setAttribute('marker-end','url(#'+(o.m||'ta')+')');tw.appendChild(l);
+    if(o.lab)tt((x1+x2)/2,(o.laby!=null?o.laby:Math.min(y1,y2)-7),o.lab,9.5,'#5C6675',null,'lodsub');
+  }
+  tt(40,30,'СРЕДА ИСПОЛНЕНИЯ — ЕДИНЫЙ КОНТУР · ДВА РЕЖИМА ЗАПУСКА',11,'#5C6675','start','olab');
+  tbox(40,168,210,68,'IBP-платформа','единая точка запуска','REST API · события · расписание запусков');
+  tarr(252,186,336,186,{lab:'web · sync — интерактив',laby:174});
+  tarr(252,218,336,218,{dash:true,lab:'batch · async — по расписанию',laby:242});
+  tbox(340,168,190,68,'Очередь','Kafka · топики запусков','лимиты параллельности · статусы');
+  tarr(532,202,566,202);
+  tbox(570,168,200,68,'Run-контроллер','Kafka manager · Pods manager','деплой подов под задачу');
+  tarr(772,186,826,120,{lab:'deploy pod',laby:116});
+  tarr(772,202,826,232);
+  tarr(772,218,826,344,{dash:true});
+  tbox(830,88,240,64,'PlanOptimizer · под','модель + решение в памяти · ~70 ГБ','конвейер: filter → модель → солвер → merge');
+  tbox(830,200,240,64,'PlanOptimizer · под','одна модель = один под','Optimizer · Merge Model & Solution');
+  tbox(830,312,240,64,'… N подов','поднимаются под задачи',null,{op:0.5,dash:true});
+  tarr(1072,108,1136,146,{c:'#22D3EE',m:'tc'});
+  tarr(1136,162,1072,124,{c:'#22D3EE',m:'tc'});
+  tarr(1072,224,1136,238,{c:'#22D3EE',m:'tc',lab:'частичные модель и решение',laby:212});
+  tarr(1136,254,1072,240,{c:'#22D3EE',m:'tc'});
+  tbox(1140,116,220,62,'Solver · поды','только решение модели','поднимаются под расчёт');
+  tbox(1140,208,220,62,'Solver · поды','возврат частичных решений','Simple Optimizer · Solver');
+  tarr(1072,344,1136,344);
+  tbox(1140,312,220,64,'Результат','async → БД · S3','статусы · логи · план');
+  tbox(340,404,330,64,'Развёртывание · Kubernetes','on-prem / cloud','14–16 CPU · 80–200 ГБ RAM · изолированные поды');
+  function tbadge(xr,yt,txt){
+    var w=Math.round(txt.length*6.2+16);
+    var r=document.createElementNS(NS,'rect');
+    r.setAttribute('x',xr-w);r.setAttribute('y',yt);r.setAttribute('width',w);r.setAttribute('height',20);r.setAttribute('rx',6);
+    r.setAttribute('fill','#1B2230');r.setAttribute('stroke','#2A3342');r.setAttribute('stroke-width',1);
+    r.setAttribute('class','lodsub');tw.appendChild(r);
+    var t=document.createElementNS(NS,'text');
+    t.setAttribute('x',xr-w/2);t.setAttribute('y',yt+14);t.setAttribute('text-anchor','middle');
+    t.setAttribute('font-size',9.5);t.setAttribute('fill','#B8C2D4');
+    t.setAttribute('class','lodsub');
+    t.setAttribute('style',"font-family:'JetBrains Mono',monospace");
+    t.textContent=txt;tw.appendChild(t);
+  }
+  tbadge(770,142,'Python');
+  tbadge(1070,62,'Python · FastAPI · NumPy');
+  tbadge(1360,90,'MILP · CP-SAT · Optuna');
+  tbadge(1360,286,'PostgreSQL · S3');
+  tt(40,522,'СТЕК',10.5,'#5C6675','start','olab');
+  (function(){
+    var chips=['Python','FastAPI','Kafka','Airflow','Kubernetes','PostgreSQL','S3','NumPy','COPT · CPLEX · SCIP · Архиплекс','OR-Tools CP-SAT','Optuna'];
+    var cx=104;
+    chips.forEach(function(c){
+      var w=Math.round(c.length*6.6+22);
+      var r=document.createElementNS(NS,'rect');
+      r.setAttribute('x',cx);r.setAttribute('y',498);r.setAttribute('width',w);r.setAttribute('height',30);r.setAttribute('rx',8);
+      r.setAttribute('fill','#151A23');r.setAttribute('stroke','#2A3342');r.setAttribute('stroke-width',1);
+      tw.appendChild(r);
+      var t=document.createElementNS(NS,'text');
+      t.setAttribute('x',cx+w/2);t.setAttribute('y',517);t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-size',10.5);t.setAttribute('fill','#B8C2D4');
+      t.setAttribute('style',"font-family:'JetBrains Mono',monospace");
+      t.textContent=c;tw.appendChild(t);
+      cx+=w+10;
+    });
+  })();
+  var ts=1,ttx0=0,tty0=0;
+  function tApply(){
+    tw.setAttribute('transform','translate('+ttx0+','+tty0+') scale('+ts+')');
+    var pxs=((tsvg.clientWidth||1090)/TW)*ts;
+    tsvg.setAttribute('data-lod',pxs<0.58?0:(pxs>1.05?2:1));
+    var pct=document.getElementById('tPct');if(pct)pct.textContent=Math.round(ts*100)+'%';
+  }
+  function tClamp(v){return Math.max(0.55,Math.min(5,v));}
+  function tPoint(evt){var r=tsvg.getBoundingClientRect();return{x:(evt.clientX-r.left)*TW/r.width,y:(evt.clientY-r.top)*TH/r.height};}
+  tsvg.addEventListener('wheel',function(e){e.preventDefault();
+    var p=tPoint(e),fq=Math.exp(-e.deltaY*0.0016),ns=tClamp(ts*fq);
+    ttx0=p.x-(p.x-ttx0)*(ns/ts);tty0=p.y-(p.y-tty0)*(ns/ts);ts=ns;tApply();},{passive:false});
+  var tp=new Map(),tDist=0,tMid=null,tDrag=false;
+  tsvg.addEventListener('pointerdown',function(e){tsvg.setPointerCapture(e.pointerId);tp.set(e.pointerId,tPoint(e));
+    if(tp.size===1){tDrag=true;tsvg.classList.add('dragging');}
+    if(tp.size===2){var a=Array.from(tp.values());tDist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);tMid={x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2};}});
+  tsvg.addEventListener('pointermove',function(e){
+    if(!tp.has(e.pointerId))return;
+    var prev=tp.get(e.pointerId),cur=tPoint(e);tp.set(e.pointerId,cur);
+    if(tp.size===1&&tDrag){ttx0+=cur.x-prev.x;tty0+=cur.y-prev.y;tApply();}
+    else if(tp.size===2){var a=Array.from(tp.values());
+      var d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);
+      var mid={x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2};
+      if(tDist>0){var ns=tClamp(ts*d/tDist);ttx0=mid.x-(mid.x-ttx0)*(ns/ts);tty0=mid.y-(mid.y-tty0)*(ns/ts);ts=ns;}
+      ttx0+=mid.x-tMid.x;tty0+=mid.y-tMid.y;tDist=d;tMid=mid;tApply();}});
+  function tEnd(e){tp.delete(e.pointerId);if(tp.size===0){tDrag=false;tsvg.classList.remove('dragging');}if(tp.size<2){tDist=0;tMid=null;}}
+  tsvg.addEventListener('pointerup',tEnd);tsvg.addEventListener('pointercancel',tEnd);
+  function tZoomTo(v){var ns=tClamp(v);var cx=(TW/2-ttx0)/ts,cy=(TH/2-tty0)/ts;
+    ttx0=TW/2-cx*ns;tty0=TH/2-cy*ns;ts=ns;tApply();}
+  document.getElementById('tZin').addEventListener('click',function(){tZoomTo(ts*1.4)});
+  document.getElementById('tZout').addEventListener('click',function(){tZoomTo(ts/1.4)});
+  document.getElementById('tZr').addEventListener('click',function(){ts=1;ttx0=0;tty0=0;tApply();});
+  tApply();
 })();
 /* ================= counters ================= */
 var cio=new IntersectionObserver(function(es){es.forEach(function(e){
